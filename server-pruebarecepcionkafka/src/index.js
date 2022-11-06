@@ -8,11 +8,16 @@ app.use(cors());
 
 // Kafka
 
+let listaEuropa = []
+let listaAsia = []
+let listaAmerica = []
+let listaFallido = []
+
 const { Kafka } = require('kafkajs')
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['kafka:9092'],
+  brokers: ['kafka:9092'],  
 })
 
 // Procesamiento Kafka
@@ -20,23 +25,42 @@ const kafka = new Kafka({
 const consume = async () =>{
 
     const consumer = kafka.consumer({
-       groupId: 'group-miembros',
+       groupId: 'group-flink',
        heartbeatInterval: 5000
       })
 
     await consumer.connect()
-    await consumer.subscribe({ topics: ['login','pais','exitoso'], fromBeginning: true })
+    await consumer.subscribe({ topics: ['login'], fromBeginning: true })
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
-        if(topic=='login'){
-          console.log('id: ',{value: message.value.toString()})
-        }
-        if(topic=='pais'){
-          console.log('país: ',{value: message.value.toString()})
-        }
-        if(topic=='exitoso'){
-          console.log('success: ',{value: message.value.toString()})
-        }
+        console.log('mensaje llegó')
+      const data = JSON.parse( message.value.toString() );
+       
+      let logeo = {
+        "id_cuenta" : data.id_cuenta,
+        "region": data.region,
+        "success": data.success
+      }
+
+      if(data.region == 'Europa'){
+        listaEuropa.push( logeo )
+      }else if(data.region == 'Asia'){
+        listaAsia.push( logeo )
+      }else if(data.region == 'America'){
+        listaAmerica.push( logeo )
+      }else{
+        listaFallido.push( logeo )
+      }
+
+      let logeos = {
+        "Europa" : listaAmerica.length,
+        "Asia" : listaAsia.length,
+        "America" : listaAmerica.length,
+        "Fallidos" : listaFallido.length
+      }
+
+      console.log( logeos )
+
        },
     })
   }

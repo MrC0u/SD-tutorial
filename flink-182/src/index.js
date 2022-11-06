@@ -10,24 +10,13 @@ app.use(cors());
 
 const { Kafka } = require('kafkajs')
 const { Partitioners } = require('kafkajs')
-const paises = ["Chile", "Argentina","Brasil","USA","Inglaterra","Alemania","Francia","Italia","España","China","Japón","Rusia"]
+const regiones = ["Asia","Europa","America"]
 const success = ["True","False"]
 var i = 0
 const kafka = new Kafka({
   clientId: 'my-app',
   brokers: ['kafka:9092'],
 })
-
-function lakong(){
-  i++
-  return ''+i
-}
-function putalawea(){
-  return paises[Math.floor(Math.random()*paises.length)];
-}
-function fuuuck(){
-  return success[Math.floor(Math.random()*success.length)];
-}
 
 //aer probemos denuevo xd
 
@@ -40,31 +29,25 @@ app.post("/run",async (req, res) =>{
   await admin.createTopics({
       waitForLeaders: true,
       topics: [
-        { topic: 'logins' },
-        {topic: 'pais'},
-        {topic: 'exitoso'}
+        { topic: 'login' },
       ],
   })
 
-  await producer.sendBatch({
-    topicMessages: [{topic: 'login',
-    messages: [
-      {value: lakong()}
-    ],
-    },{
-    topic: 'pais',
-    messages: [
-      {value:  putalawea()}
-    ],
-    },{
-    topic: 'exitoso',
-    messages: [
-      {value: fuuuck()}
-    ],}] 
-  })
+  let logeo = {
+    "id_cuenta" : 'test',
+    "region": regiones[Math.floor(Math.random()*regiones.length)],
+    "success": success[Math.floor(Math.random()*success.length)]
+  }
+
+  await producer.send(
+    {
+      topic: 'login',
+      messages: [{ value: JSON.stringify( logeo ) }],
+    },
+  )
   await producer.disconnect()
   await admin.disconnect()
-  res.send('manda2')
+  res.send('mandado')
 })
 
 // Test Response
