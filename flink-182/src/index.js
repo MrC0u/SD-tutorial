@@ -40,7 +40,7 @@ app.post("/run",async (req, res) =>{
   await admin.createTopics({
       waitForLeaders: true,
       topics: [
-        { topic: 'logins' },
+        { topic: 'login' },
         {topic: 'pais'},
         {topic: 'exitoso'}
       ],
