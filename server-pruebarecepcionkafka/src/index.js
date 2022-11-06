@@ -6,6 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
+
+
 // Kafka
 
 let listaEuropa = []
@@ -33,7 +36,6 @@ const consume = async () =>{
     await consumer.subscribe({ topics: ['login'], fromBeginning: true })
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
-        console.log('mensaje llegó')
       const data = JSON.parse( message.value.toString() );
        
       let logeo = {
