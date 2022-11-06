@@ -16,7 +16,7 @@ function sleep(ms) {
 
 const { Kafka } = require('kafkajs')
 const { Partitioners } = require('kafkajs')
-const regiones = ["Asia","Europa","America"]
+const regiones = ["Asia","Europa","America","Fail"]
 const success = ["True","False"]
 var i = 0
 const kafka = new Kafka({
@@ -65,11 +65,14 @@ app.get('/', (req, res) => {
 
 });
 
-app.post("/envio50",async (req, res) =>{
+app.post("/envio",async (req, res) =>{
 
-  let max = 50
 
-  for (let index = 0; index < max; index++) {
+  let cantidad = req.query.cantidad
+
+  // let max = 50
+
+  for (let index = 0; index < cantidad; index++) {
    
 
     const { Partitioners } = require('kafkajs')
